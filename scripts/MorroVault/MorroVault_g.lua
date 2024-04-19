@@ -16,10 +16,7 @@ local openDelay = 2
 local closeDelay = 5
 local openSoundStage = 0
 
-local playerEnteringVault = false
-local playerExitingVault = false
 local doorObj
-local doorBlockerObj
 local function getObjByID(id, cell)
     if not cell then
         cell = world.players[1].cell

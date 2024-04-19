@@ -17,7 +17,8 @@
 - Reward: Services may now be provided in the vault.
 
 ### Quest 3: Growing Pains
-- Description: Archcanon Givyn tells me that the vault has finished its trial run, 
+- Description: Archcanon Givyn tells me that the vault has finished its trial run, but they need to expand certain areas, such as housing and food supply. They need to start a kwama mine, but will need a kwama queen. He has some starting point ideas, but since he hasn't been to the surface in 50 years, knows this will be of limited help.
+Concern: Kwama mine is likely the best source of food. It's unlikely they wouldn't have had this to begin with. Perhaps expansion should focus on the mudcrabs, or guars.
 - Objective: 
 - Reward: 
 

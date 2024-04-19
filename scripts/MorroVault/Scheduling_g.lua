@@ -25,6 +25,5 @@ return {
     interface = {
         formatCurrentTime = formatCurrentTime,
         getCurrentTime = getCurrentTime,
-      autoClose = autoClose,
     },
 }

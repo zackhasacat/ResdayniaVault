@@ -22,12 +22,12 @@ Concern: Kwama mine is likely the best source of food. It's unlikely they wouldn
 - Objective: 
 - Reward: 
 
-### Quest 4: The Restoration Ritual
+### Quest 4: 
 - Description: 
 - Objective: 
 - Reward: 
 
-### Quest 5: The Vault's Legacy
+### Quest 5:
 - Description: 
 - Objective: 
 - Reward: 

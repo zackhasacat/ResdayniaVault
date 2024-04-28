@@ -2,6 +2,7 @@ local _, world = pcall(require, "openmw.world")
 local _, util = pcall(require, "openmw.util")
 local _, types = pcall(require, "openmw.types")
 local _, I = pcall(require, "openmw.interfaces")
+local _, core = pcall(require, "openmw.core")
 
 local player
 local lastCell
@@ -76,6 +77,7 @@ local function handleCellTransition(cell)
             wasInRes = false
             exitVaultMode()
         end
+        
     end
 end
 
@@ -132,6 +134,7 @@ local function onUpdate()
 
     if player.cell ~= lastCell then
         onCellChange(player.cell, lastCell)
+        core.sendGlobalEvent("MV_onCellChange",{lastCell = lastCell.name, newCell = player.cell.name})
     end
     lastPos = player.position
 end

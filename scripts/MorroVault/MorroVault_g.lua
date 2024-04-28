@@ -35,24 +35,23 @@ local function getSafeToUnlock(cell)
     local state2 = false
     for index, value in ipairs(cell:getAll()) do
         if value.enabled then
-            if value.recordId == "zhac_vault_entrylight_2_r"  then
+            if value.recordId == "zhac_vault_entrylight_2_r" then
                 state2 = true
-             end
-             if value.recordId == "zhac_vault_entrylight_1_r"  then
+            end
+            if value.recordId == "zhac_vault_entrylight_1_r" then
                 state1 = true
-             end
+            end
         end
-        
     end
     return state1 and state2
 end
-local function setLightBlockersEnabled(state,cell)
+local function setLightBlockersEnabled(state, cell)
     if not cell then
         cell = world.players[1].cell
     end
     for index, value in ipairs(cell:getAll()) do
         if value.recordId == "zhac_vault_lightblocker1" or value.recordId == "zhac_vault_lightblocker2" or value.recordId == "zhac_vault_sound_crys" then
-           value.enabled= state
+            value.enabled = state
         end
     end
 end
@@ -61,16 +60,15 @@ local function openDoor()
         return
     end
     doorOpening = true
-    
+
     if not getSafeToUnlock() then
         I.MorroVault_Interlock.setSafeState(false)
-        
     end
     setLightBlockersEnabled(false)
     I.TeleportBlocker.setDoorOpen(true)
     core.sound.playSound3d("SothaDoorOpen", doorObj, { volume = 3 })
     world.mwscript.getGlobalVariables(world.players[1]).zhac_vault_doorsafe = 0
-    
+
     async:newUnsavableSimulationTimer(openDelay, function()
         world.mwscript.getGlobalVariables(world.players[1]).zhac_doorstate = 1
         async:newUnsavableSimulationTimer(0.5, function()
@@ -80,14 +78,6 @@ local function openDoor()
     end
     )
     playerIsInVault = world.players[1].position.x > 11318
-    if playerIsInVault then
-        playerExitingVault = true
-        playerEnteringVault = false
-    else
-        playerExitingVault = false
-        playerEnteringVault = true
-
-    end
     checkForExit = true
     openSoundStage = 0
 end
@@ -96,13 +86,11 @@ local function closeDoor()
         return
     end
     local completion = anim.getCurrentTime(doorObj, "death1")
-    if completion and completion > 12 then--already closed
+    if completion and completion > 12 then --already closed
         return
-
     end
-    if  getSafeToUnlock() then
+    if getSafeToUnlock() then
         I.MorroVault_Interlock.setSafeState(true)
-        
     end
     world.mwscript.getGlobalVariables(world.players[1]).zhac_vault_doormagic = 1
     world.mwscript.getGlobalVariables(world.players[1]).zhac_doorstate = 0
@@ -110,18 +98,24 @@ local function closeDoor()
     openSoundStage = 0
 end
 local function finishDoorClose()
+    if world.mwscript.getGlobalVariables(world.players[1]).zhac_doorstate ~= 0 then
+        world.mwscript.getGlobalVariables(world.players[1]).zhac_vault_doormagic = 1
+        world.mwscript.getGlobalVariables(world.players[1]).zhac_doorstate = 0
+        if getSafeToUnlock() then
+            I.MorroVault_Interlock.setSafeState(true)
+        end
+    end
     core.sound.playSound3d("AB_Thunderclap0", doorObj, { volume = 3 })
     world.mwscript.getGlobalVariables(world.players[1]).zhac_vault_doormagic = 0
     doorClosing = false
     I.TeleportBlocker.setDoorOpen(false)
-    
+
     setLightBlockersEnabled(true)
     world.mwscript.getGlobalVariables(world.players[1]).zhac_vault_doorsafe = 1
 end
 local function autoClose()
     async:newUnsavableSimulationTimer(closeDelay, function()
-  
-closeDoor()
+        closeDoor()
     end)
 end
 local secsPassed = 0
@@ -137,7 +131,6 @@ local function onUpdate(dt)
         local completion = anim.getCurrentTime(doorObj, "death1")
         if completion and completion > 12 then
             finishDoorClose()
-            
         elseif completion then
             if openSoundStage == 0 and completion > 7.4 then
                 core.sound.playSound3d("AB_SteamHammerStrike", doorObj, { volume = 5 })
@@ -188,23 +181,22 @@ local function onUpdate(dt)
         end
     end
     if checkForExit then
-       -- if types.Player.quests(world.players[1]).zhac_vault1.stage >= 50 then
-            local playerIsInVaultNow = world.players[1].position.x > 11318
-            if playerIsInVaultNow ~= playerIsInVault then
-                autoClose()
-                checkForExit = false
-            end
-      --  end
+        -- if types.Player.quests(world.players[1]).zhac_vault1.stage >= 50 then
+        local playerIsInVaultNow = world.players[1].position.x > 11318
+        if playerIsInVaultNow ~= playerIsInVault then
+            autoClose()
+            checkForExit = false
+        end
+        --  end
     end
 end
 --zhac_carryingitems
 I.Activation.addHandlerForType(types.Activator, function(obj, actor)
-
-    if obj.recordId == "zhac_door_button" then--or obj.recordId == "ab_furn_shrinemephala_a" then
+    if obj.recordId == "zhac_door_button" then --or obj.recordId == "ab_furn_shrinemephala_a" then
         local itemCount = types.Actor.inventory(actor):countOf("zhac_vault_doorKey")
         if itemCount < 1 then
             if actor.type == types.Player then
-                actor:sendEvent("showPlayerMessage","You do not have the vault control index required to open the door.")
+                actor:sendEvent("showPlayerMessage", "You do not have the vault control index required to open the door.")
             end
             return
         end
@@ -242,18 +234,18 @@ local function StartCutscene1() --make the NPCs come out
     end
 end
 local function firstApproach()
-    if types.Player.quests(world.players[1]).zhac_vault1.stage > 0 and  types.Player.quests(world.players[1]).zhac_vault1.stage < 20 then
+    if types.Player.quests(world.players[1]).zhac_vault1.stage > 0 and types.Player.quests(world.players[1]).zhac_vault1.stage < 20 then
         types.Player.quests(world.players[1]).zhac_vault1:addJournalEntry(20)
     end
 end
 local function onPlayerAdded()
-   --world.players[1]:teleport("Resdaynia Sanctuary, Entrance", util.vector3(8861.6123046875, 4152.15234375, 11424.8330078125))
+    --world.players[1]:teleport("Resdaynia Sanctuary, Entrance", util.vector3(8861.6123046875, 4152.15234375, 11424.8330078125))
 end
 local checkinCOunt = 0
 local function checkInWhenDone(id)
     checkinCOunt = checkinCOunt + 1
     if checkinCOunt > 1 then
-       closeDoor()
+        closeDoor()
         doorClosing = true
         checkinCOunt = -1
     end
@@ -266,13 +258,18 @@ local function onItemActive(item)
         end)
     end
 end
+local function onCellChanged(data)
+    if doorClosing or doorOpening then
+        finishDoorClose()
+    end
+end
 return
 {
     interfaceName = "MorroVault",
     interface = {
-      openDoor = openDoor,
-      closeDoor = closeDoor,
-      autoClose = autoClose,
+        openDoor = openDoor,
+        closeDoor = closeDoor,
+        autoClose = autoClose,
     },
     engineHandlers = {
         onUpdate = onUpdate,
@@ -283,6 +280,7 @@ return
         goToVault = goToVault,
         StartCutscene1 = StartCutscene1,
         firstApproach = firstApproach,
-        checkInWhenDone = checkInWhenDone
+        checkInWhenDone = checkInWhenDone,
+        MV_onCellChange = onCellChanged
     }
 }

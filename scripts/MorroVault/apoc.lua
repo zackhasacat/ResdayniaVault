@@ -10,6 +10,8 @@ local anim = require("openmw.animation")
 if not core.contentFiles.has("evilsky.ESP") then
     return {}
 end
+local processedCells = {}
+local processedActors = {}
 
 local function startsWith(inputString, startString)
     return string.sub(inputString, 1, string.len(startString)) == startString
@@ -17,7 +19,8 @@ end
 
 local itemBlacklist = { "a_siltstrider" }
 local creatureBlacklist = {
-    "ash_ghoul"
+    "ash_ghoul",
+    "zhac_vault_skeleton"
 }
 
 local function replaceWithActor(npc, newId, transferInv)
@@ -35,11 +38,27 @@ math.randomseed(os.time())
 local function isInVault(obj)
     return startsWith(obj.cell.name, "Resdaynia Sanctuary")
 end
-local processedActors = {}
+local function makeCellApoc(cell)
+    for index, value in ipairs(cell:getAll()) do
+        if value.owner.recordId then
+            value.owner.recordId = nil
+        end
+        if value.owner.factionId then
+            value.owner.factionId = nil
+        end
+        if value.type.baseType == types.Item then
+            local check = math.random(1,100)
+            if check < 50 then
+                value:remove()
+            end
+        end
+    end
+end
 local function onActorActive(act)
-    if processedActors[act.id] or isInVault(act) then
+    if isInVault(act) or  processedActors[act.id] then
         return
     end
+    print(act.recordId)
     local randomNumber = math.random(0, 100)
     processedActors[act.id] = true
     if act.type == types.Creature then
@@ -48,6 +67,13 @@ local function onActorActive(act)
                 return
             end
         end
+    end
+    if not act.cell.isExterior then
+        
+    if not processedCells[act.cell.name] then
+        makeCellApoc(act.cell)
+        processedCells[act.cell.name] = true 
+    end
     end
     if act.type == types.NPC then
         local race = types.NPC.record(act).race
@@ -64,6 +90,7 @@ local function onActorActive(act)
         elseif randomNumber < 30 then
             local newObj = world.createObject("Sound_Haunted00")
             newObj:teleport(act.cell, act.position)
+            act:remove()
         else
             if act.cell.isExterior then
                 act:remove()

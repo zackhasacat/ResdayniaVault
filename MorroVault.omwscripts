@@ -10,3 +10,5 @@ NPC:scripts/MorroVault/AITravel.lua
 NPC:scripts/MorroVault/MorroVault_npc.lua
 GLOBAL:scripts/MorroVault/Interlock_coord_g.lua
 GLOBAL:scripts/MorroVault/scheduling_g.lua
+
+GLOBAL:scripts/MorroVault/powerarmor.lua

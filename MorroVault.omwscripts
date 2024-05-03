@@ -12,3 +12,4 @@ GLOBAL:scripts/MorroVault/Interlock_coord_g.lua
 GLOBAL:scripts/MorroVault/scheduling_g.lua
 
 GLOBAL:scripts/MorroVault/powerarmor.lua
+PLAYER:scripts/MorroVault/powerarmor_p.lua

@@ -18,7 +18,7 @@ local camera = require('openmw.camera')
 return {
 
     eventHandlers = {
-        setEquipment = function(list)
+        setEquipment_PA = function (list)
             async:newUnsavableSimulationTimer(1, function()
             local newEq = {}
             for key, value in pairs(list) do
@@ -32,10 +32,6 @@ return {
 
         end)
         end,
-        setEquipment2 = function (newEq)
-            
-            types.Actor.setEquipment(self, newEq)
-        end,
         startCutscene = function ()
             types.Player.setControlSwitch(self, types.Player.CONTROL_SWITCH.Controls, false)
         end
@@ -44,6 +40,19 @@ return {
         onConsoleCommand  = function (m,command)
             if command:lower() == "gotovault" then
                 core.sendGlobalEvent("goToVault")
+            end
+        end,
+        onInputAction = function (act)
+            if act == input.ACTION.Activate then
+                if self.scale > 0 then
+                    
+            async:newUnsavableSimulationTimer(1, function()
+                if input.isActionPressed(act) then
+                    core.sendGlobalEvent("exitPowerArmor",self)
+                end
+                
+            end)
+                end
             end
         end
     }

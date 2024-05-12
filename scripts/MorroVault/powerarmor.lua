@@ -51,12 +51,14 @@ local function equipPowerArmor(obj, player)
     local eqIDs = {}
     for key, value in pairs(equip) do
         table.insert(eqIDs, value.recordId)
+        print(value.recordId)
     end
     for index, value in ipairs(types.Actor.inventory(obj):getAll()) do
         local newItem = world.createObject(value.recordId)
         newItem:moveInto(player)
         table.insert(tempItems, newItem.id)
     end
+    player:sendEvent("clearEquipment_PA")
     player:sendEvent("setEquipment_PA", eqIDs)
     player:teleport(obj.cell, obj.position, obj.rotation)
     obj:teleport("ToddTest", util.vector3(0, 0, 0))
@@ -77,14 +79,14 @@ local function exitPowerArmor(player)
             break
         end
     end
-    for index, value in ipairs(tempItems) do
-        for index, value in ipairs(types.Actor.inventory(player):getAll()) do
-            if value.id == tempItems[index] then
-                value:remove()
+    for findex, tempItem in ipairs(tempItems) do
+        for index, invItem in ipairs(types.Actor.inventory(player):getAll()) do
+            if invItem.id == tempItems[findex] then
+                invItem:remove()
             end
         end
     end
-    player:sendEvent("setEquipment_PA", playerEquip)
+    player:sendEvent("setEquipment_PA2", playerEquip)
 end
 return
 {

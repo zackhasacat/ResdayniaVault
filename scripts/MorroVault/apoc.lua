@@ -17,7 +17,9 @@ local function startsWith(inputString, startString)
     return string.sub(inputString, 1, string.len(startString)) == startString
 end
 
-local itemBlacklist = { "a_siltstrider" }
+local itemBlacklist = { "a_siltstrider",
+    "ex_ship_plank"
+}
 local creatureBlacklist = {
     "ash_ghoul",
     "zhac_vault_skeleton"
@@ -46,16 +48,26 @@ local function makeCellApoc(cell)
         if value.owner.factionId then
             value.owner.factionId = nil
         end
+
         if value.type.baseType == types.Item then
-            local check = math.random(1,100)
+            local check = math.random(1, 100)
             if check < 50 then
                 value:remove()
             end
         end
+        if value.count > 0 then
+            
+        local record = value.type.records[value.recordId]
+        if record.mwscript and record.mwscript:lower() == "outsidebanner" then
+            value:remove()
+        elseif record.mwscript and record.mwscript:lower() == "signrotate" then
+            value:remove()
+        end
+        end
     end
 end
 local function onActorActive(act)
-    if isInVault(act) or  processedActors[act.id] then
+    if isInVault(act) or processedActors[act.id] then
         return
     end
     print(act.recordId)
@@ -69,11 +81,15 @@ local function onActorActive(act)
         end
     end
     if not act.cell.isExterior then
-        
-    if not processedCells[act.cell.name] then
-        makeCellApoc(act.cell)
-        processedCells[act.cell.name] = true 
-    end
+        if not processedCells[act.cell.name] then
+            makeCellApoc(act.cell)
+            processedCells[act.cell.name] = true
+        end
+    else
+        if not processedCells[tostring(act.cell.gridX) .. "-" .. tostring(act.cell.gridY)] then
+            makeCellApoc(act.cell)
+            processedCells[tostring(act.cell.gridX) .. "-" .. tostring(act.cell.gridY)] = true
+        end
     end
     if act.type == types.NPC then
         local race = types.NPC.record(act).race
@@ -107,8 +123,9 @@ end
 local function onObjectActive(act)
     if act.type == types.Light then
         if not isInVault(act) then
-            act:remove()
-            act.enabled = false
+            I.MorroVault_Light.turnLightOff(act)
+            --   act:remove()
+            --   act.enabled = false
             return
         end
     end

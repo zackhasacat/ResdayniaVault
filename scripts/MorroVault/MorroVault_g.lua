@@ -16,6 +16,8 @@ local openDelay = 2
 local closeDelay = 5
 local openSoundStage = 0
 
+local RESDAYNIA_SANCTUARY = "Resdaynia Sanctuary"
+local ENTRANCE = RESDAYNIA_SANCTUARY .. ", Entrance"
 local doorObj
 local function getObjByID(id, cell)
     if not cell then
@@ -263,6 +265,19 @@ local function onCellChanged(data)
         finishDoorClose()
     end
 end
+
+local function skipIntroQuest()
+    local entranceObjs = world.getCellByName(ENTRANCE):getAll()
+    for index, obj in ipairs(entranceObjs) do
+        if obj.recordId == "zhac_mvault_rguard_c" then
+            world.mwscript.getLocalScript(obj,world.players[1]).variables.state = 4
+            obj:teleport(obj.cell,util.vector3(12436.96875, 4344.79736328125, 11393))
+        elseif obj.recordId == "zhac_vault_door2" then
+            types.Lockable.lock(obj,100)
+        end
+    end
+    types.Player.quests(world.players[1]).zhac_vault1:addJournalEntry(50)
+end
 return
 {
     interfaceName = "MorroVault",
@@ -281,6 +296,7 @@ return
         StartCutscene1 = StartCutscene1,
         firstApproach = firstApproach,
         checkInWhenDone = checkInWhenDone,
-        MV_onCellChange = onCellChanged
+        MV_onCellChange = onCellChanged,
+        skipIntroQuest = skipIntroQuest,
     }
 }

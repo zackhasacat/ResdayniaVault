@@ -18,6 +18,9 @@ local checkInWhenDone
 local function makeAgressive()
     types.Actor.stats.ai.fight(self).base = 100
 end
+local function setMyState()
+    
+end
 return {
     engineHandlers = {
         onUpdate = onUpdate,

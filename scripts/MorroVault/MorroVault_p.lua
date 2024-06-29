@@ -13,7 +13,8 @@ local anim = require('openmw.animation')
 local nearby = require('openmw.nearby')
 local debug = require('openmw.debug')
 local camera = require('openmw.camera')
-
+local function skipIntroQuest()
+end
 return {
 
     eventHandlers = {

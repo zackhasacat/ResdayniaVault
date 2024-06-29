@@ -13,7 +13,7 @@ local antiCheese = true
 local RESDAYNIA_SANCTUARY = "Resdaynia Sanctuary"
 local ENTRANCE = RESDAYNIA_SANCTUARY .. ", Entrance"
 local POSITION_THRESHOLD = 11318  -- Positional boundary to detect significant movement in or out of the vault entrance
-local VAULT_POSITION = util.vector3(9726.462890625, 4234.05419921875, 11393) -- Last safe position inside the vault
+local VAULT_POSITION_EXIT = util.vector3(9726.462890625, 4234.05419921875, 11393) -- Last safe position outside the vault
 local storedValues = {}
 local questsToCancel = {"TR_dbAttack","A2_2_6thHouse"}
 local function startsWith(inputString, startString)
@@ -21,15 +21,15 @@ local function startsWith(inputString, startString)
 end
 
 local function kickPlayerOut()
-    player:teleport(ENTRANCE, VAULT_POSITION)
+    player:teleport(ENTRANCE, VAULT_POSITION_EXIT)
 end
 local function bringPlayerBack()
     player:teleport(lastCell, lastPos)
 end
 
-local function isInVault(actor)
+local function isInVault(actor,nameOnly)
     local cellName = actor.cell.name
-    if cellName == ENTRANCE then
+    if cellName == ENTRANCE and not nameOnly then
         if player.position.x > POSITION_THRESHOLD then
             return true
         else
@@ -39,9 +39,10 @@ local function isInVault(actor)
     if startsWith(cellName, RESDAYNIA_SANCTUARY) then
         return true
     end
+    return false
 end
 local function enterVaultMode()
-    world.players[1]:sendEvent("showPlayerMessage","Enter Vault")
+    --world.players[1]:sendEvent("showPlayerMessage","Enter Vault")
     if not storedValues then
         storedValues = {}
     end
@@ -51,7 +52,7 @@ local function enterVaultMode()
     end
 end
 local function exitVaultMode()
-    world.players[1]:sendEvent("showPlayerMessage","Exit Vault")
+  --  world.players[1]:sendEvent("showPlayerMessage","Exit Vault")
     for index, value in ipairs(questsToCancel) do
         local val = storedValues[value]
         types.Player.quests(world.players[1])[value].stage = val
@@ -59,8 +60,13 @@ local function exitVaultMode()
     
 end
 local function handleCellTransition(cell)
-    local cellName = cell.name
 
+    if isInVault(player,true) and not  I.MorroVault_Bounty.isInVault() then
+        I.MorroVault_Bounty.switchToVault()
+    elseif  not isInVault(player,true) and  I.MorroVault_Bounty.isInVault() then
+        I.MorroVault_Bounty.exitVault()
+        
+    end
     if isInVault(player) then
         if not wasInRes then  -- Player just entered the vault legally or via noclip
             if not doorIsOpen and antiCheese then  -- Handle unexpected entrance

@@ -23,12 +23,12 @@ local function setSafeState(safe)
         delay = 5
     end
     async:newUnsavableSimulationTimer(delay, function()
-    for index, value in ipairs(world.players[1].cell:getAll(types.NPC)) do
-        if types.NPC.record(value).class == "guard" then
-            value:sendEvent("setSafeState", safe)
+        for index, value in ipairs(world.players[1].cell:getAll(types.NPC)) do
+            if types.NPC.record(value).class == "guard" then
+                value:sendEvent("setSafeState", safe)
+            end
         end
-    end
-end)
+    end)
     setObjectState("zhac_vault_entrylight_2_g", safe)
     setObjectState("zhac_vault_entrylight_2_r", not safe)
     setObjectState("zhac_vault_entrylight_1_g", safe)

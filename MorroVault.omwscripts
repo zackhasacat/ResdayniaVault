@@ -5,11 +5,13 @@ GLOBAL:scripts/MorroVault/TeleportBlocker.lua
 GLOBAL:scripts/MorroVault/ItemStorage.lua
 GLOBAL:scripts/MorroVault/Librarian.lua
 GLOBAL:scripts/MorroVault/apoc.lua
+GLOBAL:scripts/MorroVault/bountytracker.lua
 PLAYER:scripts/MorroVault/ItemStorage_P.lua
 NPC:scripts/MorroVault/AITravel.lua
 NPC:scripts/MorroVault/MorroVault_npc.lua
 GLOBAL:scripts/MorroVault/Interlock_coord_g.lua
 GLOBAL:scripts/MorroVault/scheduling_g.lua
-
+GLOBAL:scripts/MorroVault/LightToggle_G.lua
+PLAYER:scripts/MorroVault/apoc/blight_damage.lua
 GLOBAL:scripts/MorroVault/powerarmor.lua
 PLAYER:scripts/MorroVault/powerarmor_p.lua

@@ -61,7 +61,7 @@ MECHANICS:
     Combat/Arena: A battleground, that would allow you to either have NPCs team up with each other, and play games/fake combat with each other. Some sort of capture the flag. Might also have the option to summon daedra to fight.
 
 
-    Wasteland: The player can choose to allow the apocolpyse to happen. This will make vvardenfell uninabitable. All(most?) human life on the island outside of the vault is removed. NPCs are removed, or replaced with corpus monsters. Buildings have their lightes removed/extinguised, items are removed randomly, tomb/cave/spooky sound markers are placed. Weather is forced to be blight in all regions.
+    Wasteland: The player can choose to allow the apocolpyse to happen. This will make vvardenfell uninhabitable. All(most?) human life on the island outside of the vault is removed. NPCs are removed, or replaced with corpus monsters. Buildings have their lightes removed/extinguised, items are removed randomly, tomb/cave/spooky sound markers are placed. Weather is forced to be blight in all regions.
 
 Possible Quests:
     Solve the murder of one of the vault residents
@@ -72,6 +72,19 @@ Possible Quests:
 
     Upgrade the reactor
 
+    5 vault tickets, can save 5 NPCs from the end of the world
+
     New home for a mudcrab: The Mudcrab merchant is wanting to live somewhere safer. The player offers them the vault's farm, and if the vault and mudcrab agree, the player can lead/carry the mudcrab merchent into the vault, and have him live with the rest of the domesticated mudcrabs.
 
     Evil ending: Destory the vault(using the reactor?), or murder the residents and allow another faction to inhabit it. Vampires, perhaps.
+
+Problems:
+Bored
+Not enough food
+
+
+Questline:
+
+1. Be requested by lead of the dissident priests to go talk to the vault residents. You arrive at the vault door, and are greeted, but must leave items outside. You deliver a letter to the archcanon inside, who is the leader of the vault. He reads it, and is satisified, asking us to go around and explore the vault, and help where we can.
+
+2. Go to the pub, get your room. The publican tells you his friend could use our help.

@@ -52,7 +52,7 @@ return {
         end,
         onInputAction    = function(act)
             if act == input.ACTION.Activate then
-                if self.scale > 0 then
+                if self.scale > 1 then
                     async:newUnsavableSimulationTimer(1, function()
                         if input.isActionPressed(act) then
                             core.sendGlobalEvent("exitPowerArmor", self)

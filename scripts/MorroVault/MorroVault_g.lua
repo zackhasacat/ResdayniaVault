@@ -122,6 +122,7 @@ local function autoClose()
 end
 local secsPassed = 0
 local function onUpdate(dt)
+
     if not doorObj then
         for index, value in ipairs(world.players[1].cell:getAll(types.Activator)) do
             if value.recordId == "zhac_vault_door" then
@@ -278,6 +279,9 @@ local function skipIntroQuest()
     end
     types.Player.quests(world.players[1]).zhac_vault1:addJournalEntry(50)
 end
+local function setCarryObj(obj)
+    carryObj = obj
+end
 return
 {
     interfaceName = "MorroVault",
@@ -285,6 +289,8 @@ return
         openDoor = openDoor,
         closeDoor = closeDoor,
         autoClose = autoClose,
+        setCarryObj = setCarryObj
+
     },
     engineHandlers = {
         onUpdate = onUpdate,

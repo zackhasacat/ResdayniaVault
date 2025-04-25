@@ -7,23 +7,21 @@ local types = require("openmw.types")
 local async = require("openmw.async")
 local anim = require("openmw.animation")
 
-if not core.contentFiles.has("evilsky.ESP") then
-    return {}
-end
+if not core.contentFiles.has("evilsky.ESP") then return {} end
 local processedCells = {}
 local processedActors = {}
-
+local function elgibileForRemoval(obj)
+    if obj.contentFile then
+        return true
+    end
+    return false
+end
 local function startsWith(inputString, startString)
     return string.sub(inputString, 1, string.len(startString)) == startString
 end
 
-local itemBlacklist = { "a_siltstrider",
-    "ex_ship_plank"
-}
-local creatureBlacklist = {
-    "ash_ghoul",
-    "zhac_vault_skeleton"
-}
+local itemBlacklist = {"a_siltstrider", "ex_ship_plank"}
+local creatureBlacklist = {"ash_ghoul", "zhac_vault_skeleton"}
 
 local function replaceWithActor(npc, newId, transferInv)
     table.insert(creatureBlacklist, newId)
@@ -42,32 +40,32 @@ local function isInVault(obj)
 end
 local function makeCellApoc(cell)
     for index, value in ipairs(cell:getAll()) do
-        if value.owner.recordId then
-            value.owner.recordId = nil
-        end
-        if value.owner.factionId then
-            value.owner.factionId = nil
-        end
+        if value.owner.recordId then value.owner.recordId = nil end
+        if value.owner.factionId then value.owner.factionId = nil end
 
+        if elgibileForRemoval(value) then
         if value.type.baseType == types.Item then
             local check = math.random(1, 100)
-            if check < 50 then
+            if check < 50 then value:remove() end
+        end
+        if value.type == types.Container and value.cell.isExterior and value.type.record(value).isOrganic then
+            value:remove()
+        end
+        if value.count > 0 then
+
+            local record = value.type.records[value.recordId]
+            if record.mwscript and record.mwscript:lower() == "outsidebanner" then
+                value:remove()
+            elseif record.mwscript and record.mwscript:lower() == "signrotate" then
                 value:remove()
             end
         end
-        if value.count > 0 then
-            
-        local record = value.type.records[value.recordId]
-        if record.mwscript and record.mwscript:lower() == "outsidebanner" then
-            value:remove()
-        elseif record.mwscript and record.mwscript:lower() == "signrotate" then
-            value:remove()
-        end
-        end
+    end
     end
 end
 local function onActorActive(act)
-    if isInVault(act) or processedActors[act.id] then
+    if isInVault(act) or processedActors[act.id] then return end
+    if not elgibileForRemoval(act) then
         return
     end
     print(act.recordId)
@@ -75,9 +73,7 @@ local function onActorActive(act)
     processedActors[act.id] = true
     if act.type == types.Creature then
         for index, value in ipairs(creatureBlacklist) do
-            if value == act.recordId then
-                return
-            end
+            if value == act.recordId then return end
         end
     end
     if not act.cell.isExterior then
@@ -86,9 +82,11 @@ local function onActorActive(act)
             processedCells[act.cell.name] = true
         end
     else
-        if not processedCells[tostring(act.cell.gridX) .. "-" .. tostring(act.cell.gridY)] then
+        if not processedCells[tostring(act.cell.gridX) .. "-" ..
+            tostring(act.cell.gridY)] then
             makeCellApoc(act.cell)
-            processedCells[tostring(act.cell.gridX) .. "-" .. tostring(act.cell.gridY)] = true
+            processedCells[tostring(act.cell.gridX) .. "-" ..
+                tostring(act.cell.gridY)] = true
         end
     end
     if act.type == types.NPC then
@@ -116,14 +114,31 @@ local function onActorActive(act)
         end
         return
     end
-    if not isInVault(act) then
-        act:remove()
-    end
+    if not isInVault(act) then act:remove() end
+end
+local function startFireFall(position)
+    local player = world.players[1]
+    local topPos = position + util.vector3(0,0,13000)
+    local botPos = position + util.vector3(0,0,-3000)
+
+
+    local botObj = world.createObject("shac_fireball_emmiter_target")
+    botObj:teleport(player.cell,botPos)
+    local topObj = world.createObject("shac_fireball_emmiter_once")
+    topObj:teleport(player.cell,topPos)
 end
 local function onObjectActive(act)
+    if not elgibileForRemoval(act) then
+        return
+    end
     if act.type == types.Light then
         if not isInVault(act) then
-            I.MorroVault_Light.turnLightOff(act)
+            if act.cell.isExterior then
+                act:remove()
+            else
+
+                I.MorroVault_Light.turnLightOff(act)
+            end
             --   act:remove()
             --   act.enabled = false
             return
@@ -136,12 +151,37 @@ local function onObjectActive(act)
         end
     end
 end
-return
-{
+local function getRandomNearbyPosition(radius)
+    local player = world.players[1]
+    local pos = player.position
+    local angle = math.random() * 2 * math.pi
+    local distance = math.random() * radius
+    local offsetX = math.cos(angle) * distance
+    local offsetY = math.sin(angle) * distance
+
+    return util.vector3(pos.x + offsetX, pos.y + offsetY, pos.z)
+end
+local player
+local delay = 0
+local function onUpdate(dt)
+    if not player then
+        player = world.players[1]
+    end
+    if player.cell.isExterior then
+        delay = delay + dt
+        if delay > 0.05 then
+            
+        local firePos = getRandomNearbyPosition(15000)
+        startFireFall(firePos)
+        delay = 0
+        end
+    end
+end
+return {
     engineHandlers = {
         onObjectActive = onObjectActive,
         onActorActive = onActorActive,
+        onUpdate = onUpdate,
     },
-    eventHandlers = {
-    }
+    eventHandlers = {startFireFall = startFireFall}
 }

@@ -64,7 +64,7 @@ local function equipPowerArmor(obj, player)
     obj:teleport("ToddTest", util.vector3(0, 0, 0))
 end
 I.Activation.addHandlerForType(types.NPC, function(obj, actor)
-    if obj.recordId == "zhac_powerarmor3" then
+    if obj.recordId == "zhac_vault_armor_01" then
         equipPowerArmor(obj, actor)
         return false
     end
@@ -73,7 +73,7 @@ local function exitPowerArmor(player)
     player:setScale(playerHeight)
     local obj
     for index, value in ipairs(world.getCellByName("ToddTest"):getAll(types.NPC)) do
-        if value.recordId == "zhac_powerarmor3" then
+        if value.recordId == "zhac_vault_armor_01" then
             obj = value
             value:teleport(player.cell, player.position, player.rotation)
             break

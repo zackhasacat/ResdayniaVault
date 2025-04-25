@@ -94,6 +94,9 @@ local function onCellChange(newCell, oldCell)
 end
 
 local function onUpdate()
+    if not  world.players then
+        return
+    end
     if not player or not player.cell then
         player = world.players[1]
         if not player then return end
